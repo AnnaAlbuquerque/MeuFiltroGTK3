@@ -7,7 +7,7 @@
 
 GtkWidget *window, *image;
 GtkWidget *vbox, *hbox;
-GtkWidget *label1, *label2;
+GtkWidget *label1;
 char *nomeArquivo;
 
 void printImagemInfo(Imagem img) {
@@ -106,7 +106,6 @@ void funcaoRestaurar(GtkWidget *widget, gpointer data) {
 }
 
 void funcaoAplicar(GtkWidget *widget, gpointer data) {
-
 	funcaoRestaurar(NULL, NULL);
 	//Imagem img = obterMatrizImagem(image);
 	Imagem res = meuFiltro(original);
@@ -117,8 +116,6 @@ void funcaoAplicar(GtkWidget *widget, gpointer data) {
 
 
 int main(int argc, char **argv) {
-
-
 	//inicializa a semente de acordo com time
 	srand(time(NULL));
 
@@ -129,13 +126,13 @@ int main(int argc, char **argv) {
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 	//altera o titulo da janela
-	gtk_window_set_title(GTK_WINDOW(window), "Aplicação de Filtros");
+	gtk_window_set_title(GTK_WINDOW(window), "Aplicação de Tiras");
 	
 	//altera a posicao da janela para estar centralizada
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 
 	//altera o tamanho da janela
-	gtk_window_set_default_size(GTK_WINDOW(window), 700, 500);
+	gtk_window_set_default_size(GTK_WINDOW(window), 1000, 800);
 
 	//a janela pode ser redimensionada
 	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
@@ -185,7 +182,6 @@ int main(int argc, char **argv) {
 
 	//cria labels
 	label1 = gtk_label_new("Carregue uma imagem");
-	label2 = gtk_label_new("Aplicação de Filtros");
 
 	//adiciona um widget imagem vazio
 	image = gtk_image_new();
@@ -193,14 +189,12 @@ int main(int argc, char **argv) {
 	//adiciona os demais widgets no container vertical (vbox)
 	//a funcao gtk_box_pack_start eh similar a gtk_container_add
 	//mas com mais parametros
+	gtk_box_pack_start(GTK_BOX(vbox), label1, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), scrolledWindow, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(scrolledWindow), image);
-
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label1, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label2, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), frameFiltro, FALSE, FALSE, 0);
-
+	
 	adicionarWidgetsMeuFiltro(frameFiltro);
 
 	//adiciona o vbox na janela (window)

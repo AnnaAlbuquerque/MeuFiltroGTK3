@@ -8,8 +8,10 @@
 #include "imagem.h"
 
 //declare aqui os seus widgets
-GtkWidget *widgetControleNivel;
-GtkWidget *widgetMisturarCanais;
+GtkWidget *widgetControleTamanho;
+GtkWidget *widgetControleEspacamento;
+GtkWidget *radioOrientacao1, *radioOrientacao2, *radioEmbaralhar1, *radioEmbaralhar2;
+GtkWidget *labelTextura, *labelOrientacao, *labelEmbaralhar, *labelTamanho, *labelEspacamento;
 
 Imagem meuFiltro(Imagem origem);
 void inicializarWidgetsMeuFiltro();
