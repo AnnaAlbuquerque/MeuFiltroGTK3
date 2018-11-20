@@ -81,34 +81,41 @@ void adicionarWidgetsMeuFiltro(GtkWidget *container) {
 }
 
 Imagem meuFiltro(Imagem origem) {
-/*	int i, j;
-	Imagem destino = alocarImagem(origem);
-	int nivel = (int) gtk_range_get_value(GTK_RANGE(widgetControleTamanho));
+	int i, j;
+	//Imagem destino = alocarImagem(origem);
+	Imagem destino = alocarImagemDimensao(origem.w*2, origem.h*2, origem.numCanais);
+	
+	int nivel = (int) gtk_range_get_value(GTK_RANGE(widgetControleNivel));
 	int ch1, ch2, ch3;
 
 	ch1 = 0;
 	ch2 = 1;
 	ch3 = 2;
-	
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widgetMisturarCanais))) {
+		ch1 = rand()%3;
+		ch2 = (ch1+1+rand()%2)%3;
+		ch3 = 3 - ch2 - ch1;
+	}
+
 	for(j = 0; j < destino.w; j++) {
 		for(i = 0; i < destino.h; i++) {
-			int x = j - nivel + rand()%(2*nivel+1);
-			int y = i - nivel + rand()%(2*nivel+1);
+			int x = j/2 - nivel + rand()%(2*nivel+1);
+			int y = i/2 - nivel + rand()%(2*nivel+1);
 			if(x < 0)
 				x = 0;
 			if(y < 0)
 				y = 0;
-			if(x >= destino.w)
-				x = destino.w - 1;
-			if(y >= destino.h)
-				y = destino.h - 1;
+			if(x >= origem.w)
+				x = origem.w - 1;
+			if(y >= origem.h)
+				y = origem.h - 1;
 			destino.m[i][j][0] = origem.m[y][x][ch1];
 			destino.m[i][j][1] = origem.m[y][x][ch2];
 			destino.m[i][j][2] = origem.m[y][x][ch3];
 		}
 	}
+	
 	return destino;
-*/
 }
 
 
