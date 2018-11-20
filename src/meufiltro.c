@@ -115,8 +115,9 @@ Imagem meuFiltro(Imagem origem) {
 			destino.m[i][j][2] = origem.m[y][x][ch3];
 		}
 	}
-	*/
+	
 	return destino;
+	*/
 }
 
 
