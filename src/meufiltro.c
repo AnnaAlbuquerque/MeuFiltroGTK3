@@ -81,7 +81,7 @@ void adicionarWidgetsMeuFiltro(GtkWidget *container) {
 }
 
 Imagem meuFiltro(Imagem origem) {
-	int i, j;
+	/*int i, j;
 	//Imagem destino = alocarImagem(origem);
 	Imagem destino = alocarImagemDimensao(origem.w*2, origem.h*2, origem.numCanais);
 	
@@ -114,7 +114,7 @@ Imagem meuFiltro(Imagem origem) {
 			destino.m[i][j][2] = origem.m[y][x][ch3];
 		}
 	}
-	
+	*/
 	return destino;
 }
 
