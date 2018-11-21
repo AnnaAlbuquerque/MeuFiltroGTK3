@@ -101,7 +101,6 @@ void atualizarGtkImage(Imagem img) {
 }
 
 void funcaoRestaurar(GtkWidget *widget, gpointer data) {
-
 	gtk_image_set_from_file(GTK_IMAGE(image), nomeArquivo);
 	gtk_widget_queue_draw(image);
 	gtk_label_set_text(GTK_LABEL(label1), "Imagem restaurada");
@@ -115,7 +114,6 @@ void funcaoAplicar(GtkWidget *widget, gpointer data) {
 	desalocarImagem(res);
 	gtk_label_set_text(GTK_LABEL(label1), "Filtro aplicado");
 }   
-
 
 int main(int argc, char **argv) {
 	//inicializa a semente de acordo com time
@@ -145,7 +143,7 @@ int main(int argc, char **argv) {
 	//GtkVBox eh um container vertical para widgets
 	//o primeiro argumento significa se os widgets sao igualmente distribuidos
 	//o segundo argumento significa o espacamento entre os widgets em pixels
-	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 3);
 
 	//GtkHBox eh um container horizontal para widgets
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
@@ -167,7 +165,7 @@ int main(int argc, char **argv) {
 
 	//cria um scrolled window para inserir a imagem
 	GtkWidget *scrolledWindow = gtk_scrolled_window_new(gtk_adjustment_new(0, 0, 100, 1, 1, 1), gtk_adjustment_new(0, 0, 100, 1, 1, 1));
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolledWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolledWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	inicializarWidgetsMeuFiltro();
 
