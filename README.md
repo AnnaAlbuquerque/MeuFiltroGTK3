@@ -11,7 +11,7 @@ Desenvolver um aplicativo que divide imagens em tiras utilizando GTK+ e a lingua
 * Escolha de uma textura de papel (ou nenhuma textura) às tiras.
 
 ## Compilação
-O projeto contém um arquivo Makefile, ou seja, basta digitar o comando abaixo em seu terminal.
+O projeto contém um arquivo Makefile, ou seja, basta digitar o comando abaixo em seu terminal:
 ```
 $ make
 ```
@@ -19,6 +19,10 @@ $ make
 ## Execução
 ```
 $ ./a.out
+```
+ou
+```
+$ ./a.out imagem.jpg
 ```
 
 ## Autores

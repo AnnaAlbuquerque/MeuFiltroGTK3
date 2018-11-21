@@ -45,7 +45,6 @@ Imagem obterMatrizImagem() {
 	return img;
 }
 
-
 void carregarImagem(GtkWidget *widget, gpointer data) {
 	GtkWidget *dialog = gtk_file_chooser_dialog_new("Abrir arquivo", GTK_WINDOW(window), GTK_FILE_CHOOSER_ACTION_OPEN, "_Cancel", GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL);
 
@@ -81,8 +80,11 @@ void atualizarGtkImage(Imagem img) {
 	int i, j, ch;
 
 	GdkPixbuf *buffer = gtk_image_get_pixbuf(GTK_IMAGE(image));
-	GdkPixbuf *newbuffer = gdk_pixbuf_copy(buffer);
-	int rowstride = gdk_pixbuf_get_rowstride(buffer);
+	//GdkPixbuf *newbuffer = gdk_pixbuf_copy(buffer);
+	GdkPixbuf *newbuffer = gdk_pixbuf_new(gdk_pixbuf_get_colorspace(buffer), gdk_pixbuf_get_has_alpha(buffer), gdk_pixbuf_get_bits_per_sample(buffer), img.w, img.h);
+	//printf("Novo buffer com colorspace %d, alpha %d, bits/sample %d, width %d, height %d\n", gdk_pixbuf_get_colorspace(buffer), gdk_pixbuf_get_has_alpha(buffer), gdk_pixbuf_get_bits_per_sample(buffer), img.w, img.h);
+
+	int rowstride = gdk_pixbuf_get_rowstride(newbuffer);
 
 	guchar *pixels = gdk_pixbuf_get_pixels(newbuffer);
 	guchar *p;
@@ -99,7 +101,6 @@ void atualizarGtkImage(Imagem img) {
 }
 
 void funcaoRestaurar(GtkWidget *widget, gpointer data) {
-
 	gtk_image_set_from_file(GTK_IMAGE(image), nomeArquivo);
 	gtk_widget_queue_draw(image);
 	gtk_label_set_text(GTK_LABEL(label1), "Imagem restaurada");
@@ -113,7 +114,6 @@ void funcaoAplicar(GtkWidget *widget, gpointer data) {
 	desalocarImagem(res);
 	gtk_label_set_text(GTK_LABEL(label1), "Filtro aplicado");
 }   
-
 
 int main(int argc, char **argv) {
 	//inicializa a semente de acordo com time
@@ -143,7 +143,7 @@ int main(int argc, char **argv) {
 	//GtkVBox eh um container vertical para widgets
 	//o primeiro argumento significa se os widgets sao igualmente distribuidos
 	//o segundo argumento significa o espacamento entre os widgets em pixels
-	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 3);
 
 	//GtkHBox eh um container horizontal para widgets
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
@@ -165,7 +165,7 @@ int main(int argc, char **argv) {
 
 	//cria um scrolled window para inserir a imagem
 	GtkWidget *scrolledWindow = gtk_scrolled_window_new(gtk_adjustment_new(0, 0, 100, 1, 1, 1), gtk_adjustment_new(0, 0, 100, 1, 1, 1));
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolledWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolledWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	inicializarWidgetsMeuFiltro();
 
@@ -200,6 +200,18 @@ int main(int argc, char **argv) {
 	//adiciona o vbox na janela (window)
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 
+	if(argc > 1) {
+		nomeArquivo = argv[1];
+		FILE *arq = fopen(nomeArquivo, "r");
+		if(arq) {
+			gtk_image_set_from_file(GTK_IMAGE(image), nomeArquivo);
+			gtk_widget_queue_draw(image);
+	
+			gtk_label_set_text(GTK_LABEL(label1), "Imagem carregada");
+			original = obterMatrizImagem();
+			fclose(arq);
+		}
+	}
 	//conecta o evento clicked do botaoCarregar a funcao carregarImagem
 	g_signal_connect(G_OBJECT(botaoCarregar), "clicked", G_CALLBACK(carregarImagem), NULL);
 
