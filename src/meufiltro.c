@@ -6,10 +6,10 @@ void inicializarWidgetsMeuFiltro() {
 	
 	// Controle de tamanho e espaçamento das tiras
 	labelTamanho = gtk_label_new("Tamanho das tiras");
-	widgetControleTamanho = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1, 10, 1);
+	widgetControleTamanho = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1, 5, 1);
 	g_signal_connect(G_OBJECT(widgetControleTamanho), "value-changed", G_CALLBACK(funcaoAplicar), NULL);
 	labelEspacamento = gtk_label_new("Espaçamento entre as tiras");
-	widgetControleEspacamento = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1, 10, 1);
+	widgetControleEspacamento = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1, 5, 1);
 	g_signal_connect(G_OBJECT(widgetControleEspacamento), "value-changed", G_CALLBACK(funcaoAplicar), NULL);
 
 	// Orientação das Tiras (Horizontal ou Vertical)
@@ -81,23 +81,62 @@ void adicionarWidgetsMeuFiltro(GtkWidget *container) {
 }
 
 Imagem meuFiltro(Imagem origem) {
-	int i, j, x;
-	int cont = 0, toggle = 1;
+	int i, j, x, v;
 	int ch1 = 0, ch2 = 1, ch3 = 2;
 	
 	// Recebe os valores da barras de rolagem
 	int nivelTiras = (int) gtk_range_get_value(GTK_RANGE(widgetControleTamanho));
-	nivelTiras = origem.h / nivelTiras;
 	int nivelEspacamento = (int) gtk_range_get_value(GTK_RANGE(widgetControleEspacamento));
-	nivelEspacamento= origem.h / nivelEspacamento;
+	
+	 /* Para escolher entre qtd de tiras:
+     	    * int tamanhoTiras = origem.h / nivelTiras;
+	    * int tamanhoEspacamento = origem.h / nivelEspacamento;
+     	*/
+	// Tamanho das tiras 
+	// AQUI ESTÁ BUGADO =D
+	int tamanhoTiras = (origem.h / 10) * nivelTiras;
+	int qtdTiras = origem.h / tamanhoTiras;
+	int tamanhoEspacamento = (origem.h / 10) * nivelEspacamento;
+	int qtdEspacamentos = qtdTiras - 1;	
 
-	// Calcula a qtd de tiras e espaçamentos
-	int qtdTiras = origem.h / nivelTiras;
-	int qtdEspacamentos = qtdTiras - 1;
+	Imagem destino = alocarImagemDimensao(origem.w, (origem.h + (tamanhoEspacamento*qtdEspacamentos)), origem.numCanais);	
+	
+	int cont = 0, toggle = 0;
+	for(i = 0, x = 0, v = 1; v <= (qtdTiras+qtdEspacamentos); i++) {
+		if (v % 2) {
+			for( j = 0; j < destino.w; j++) {					
+				destino.m[i][j][ch1] = origem.m[x][j][ch1];
+				destino.m[i][j][ch2] = origem.m[x][j][ch2];
+				destino.m[i][j][ch3] = origem.m[x][j][ch3];
+				toggle = 1;
+			}	
+		} else {
+			for( j = 0; j < destino.w; j++) {	
+				destino.m[i][j][0] = 0;
+				destino.m[i][j][1] = 0;					
+				destino.m[i][j][2] = 0;
+				toggle = 0;
+			}
+		}
+		cont++;	
+		if (toggle) {
+			x++;
+			if (cont == tamanhoTiras) {
+				cont = 0;
+				v++;
+			}
+		} else {
+			if (cont == tamanhoEspacamento) {
+				cont = 0;
+				v++;
+			}
+		}
 
-	Imagem destino = alocarImagemDimensao(origem.w, (origem.h + (nivelEspacamento * qtdEspacamentos)), origem.numCanais);	
-
-	for(i = 0, x = 0; i < destino.h; i++) {
+		
+		
+	}
+	
+	/*for(i = 0, x = 0; i < destino.h; i++) {
 		for(j = 0; j < destino.w; j++) {
 			if (toggle % 2) {
 				destino.m[i][j][ch1] = origem.m[x][j][ch1];
@@ -122,7 +161,8 @@ Imagem meuFiltro(Imagem origem) {
 			toggle = 1;
 			cont = 0;
 		}
-	}
+	}*/
 
 	return destino;
+	
 }
