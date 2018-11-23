@@ -6,10 +6,10 @@ void inicializarWidgetsMeuFiltro() {
 	
 	// Controle de tamanho e espaçamento das tiras
 	labelTamanho = gtk_label_new("Tamanho das tiras");
-	widgetControleTamanho = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1, 10, 1);
+	widgetControleTamanho = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1, 100, 1);
 	g_signal_connect(G_OBJECT(widgetControleTamanho), "value-changed", G_CALLBACK(funcaoAplicar), NULL);
 	labelEspacamento = gtk_label_new("Espaçamento entre as tiras");
-	widgetControleEspacamento = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1, 10, 1);
+	widgetControleEspacamento = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1, 50, 1);
 	g_signal_connect(G_OBJECT(widgetControleEspacamento), "value-changed", G_CALLBACK(funcaoAplicar), NULL);
 
 	// Orientação das Tiras (Horizontal ou Vertical)
@@ -89,46 +89,98 @@ Imagem meuFiltro(Imagem origem) {
 	// Recebe os valores da barras de rolagem
 	int tamanhoTiras = (int) gtk_range_get_value(GTK_RANGE(widgetControleTamanho));
 	int tamanhoEspacamento = (int) gtk_range_get_value(GTK_RANGE(widgetControleEspacamento));
-
-	// Calcula a qtd de tiras e espaçamentos
-	int qtdTiras = origem.h / tamanhoTiras;
-	int qtdEspacamentos = qtdTiras - 1;
-
-	printf("%d %d  %d %d  %d \n", tamanhoTiras, tamanhoEspacamento, qtdTiras, qtdEspacamentos, ((origem.h) + (tamanhoEspacamento * qtdEspacamentos))); // usado apenas para a verificação dos valores
+	int horizontal = (int) gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(radioOrientacao1));
+	//parte horizontal
 
 
-	//alocando uma nova imagem já com a altura modificada
-	Imagem destino = alocarImagemDimensao(origem.w, ((origem.h) + (tamanhoEspacamento * qtdEspacamentos)), origem.numCanais);	 // altura = alturaOrigem + (tamanhoTiras * qntTiras)
+	if (horizontal){
 
-	//percorrendo a imagem destino
-	for(i = 0; i < destino.h; i++) {
-		for(j = 0, jImg = 0; j < destino.w; j++) {
+		// Calcula a qtd de tiras e espaçamentos horizontais
+		int qtdTiras = origem.h / tamanhoTiras;
+		int qtdEspacamentos = qtdTiras - 1;
 
-			if (img){ //copia o valor da imagem
-				destino.m[i][j][0] = origem.m[iImg][jImg][0];
-				destino.m[i][j][1] = origem.m[iImg][jImg][1];
-				destino.m[i][j][2] = origem.m[iImg][jImg][2];
-				jImg++; //incremento do indice j da imagem -> não é necessário usar aqui, mas vai facilitar na construção das tiras verticais
+		printf("%d %d  %d %d  %d \n", tamanhoTiras, tamanhoEspacamento, qtdTiras, qtdEspacamentos, ((origem.h) + (tamanhoEspacamento * qtdEspacamentos))); // usado apenas para a verificação dos valores
 
-			}else{ //deixando a tira preta
-				destino.m[i][j][0] = 0;
-				destino.m[i][j][1] = 0;
-				destino.m[i][j][2] = 0;
+
+		//alocando uma nova imagem já com a altura modificada
+		Imagem destino = alocarImagemDimensao(origem.w, ((origem.h) + (tamanhoEspacamento * qtdEspacamentos)), origem.numCanais);	 // altura = alturaOrigem + (tamanhoTiras * qntTiras)
+
+		//percorrendo a imagem destino
+		for(i = 0; i < destino.h; i++) {
+				for(j = 0, jImg = 0; j < destino.w; j++) {
+
+				if (img){ //copia o valor da imagem
+					destino.m[i][j][0] = origem.m[iImg][jImg][0];
+					destino.m[i][j][1] = origem.m[iImg][jImg][1];
+					destino.m[i][j][2] = origem.m[iImg][jImg][2];
+					jImg++; //incremento do indice j da imagem -> não é necessário usar aqui, mas vai facilitar na construção das tiras verticais
+
+				}else{ //deixando a tira preta
+					destino.m[i][j][0] = 0;
+					destino.m[i][j][1] = 0;
+					destino.m[i][j][2] = 0;
+				}
+			}
+
+		if(img){ //incremento do indice i da imagem
+				iImg++;
+			} else { // incrmento do indice i do espaçamento
+				indiceEsp++;
+			}
+
+			if((iImg != 0) && (iImg % tamanhoTiras == 0)  && img){ // condicional usada para alterar da imagem para o espaçamento 
+				img = 0;
+			}else if( (indiceEsp != 0) && (indiceEsp % tamanhoEspacamento == 0) && !img){ // condicional usada para alterar do espaçamento para a imagem
+				img = 1;
 			}
 		}
 
-		if(img){ //incremento do indice i da imagem
-			iImg++;
-		} else { // incrmento do indice i do espaçamento
-			indiceEsp++;
+		return destino;
+
+	} else { //Parte Vertical -> fazer o teste 
+
+		// Calcula a qtd de tiras e espaçamentos horizontais
+		int qtdTiras = origem.w / tamanhoTiras;
+		int qtdEspacamentos = qtdTiras - 1;
+
+		printf("%d %d  %d %d  %d \n", tamanhoTiras, tamanhoEspacamento, qtdTiras, qtdEspacamentos, ((origem.h) + (tamanhoEspacamento * qtdEspacamentos))); // usado apenas para a verificação dos valores
+
+
+		//alocando uma nova imagem já com a altura modificada
+		Imagem destino = alocarImagemDimensao(((origem.w) + (tamanhoEspacamento * qtdEspacamentos)), origem.h, origem.numCanais);	 // largura = larguraOrigem + (tamanhoTiras * qntTiras)
+
+		//percorrendo a imagem destino 
+		for(j = 0; j < destino.w; j++) {
+			for(i = 0, iImg = 0; i < destino.h; i++) {
+
+				if (img){ //copia o valor da imagem
+					destino.m[i][j][0] = origem.m[iImg][jImg][0];
+					destino.m[i][j][1] = origem.m[iImg][jImg][1];
+					destino.m[i][j][2] = origem.m[iImg][jImg][2];
+					iImg++; //incremento do indice i da imagem
+
+				}else{ //deixando a tira preta
+					destino.m[i][j][0] = 0;
+					destino.m[i][j][1] = 0;
+					destino.m[i][j][2] = 0;
+				}
+			}
+
+			if(img){ //incremento do indice i da imagem
+				jImg++;
+			} else { // incremento do indice i do espaçamento
+				indiceEsp++;
+			}
+
+			if((jImg != 0) && (jImg % tamanhoTiras == 0)  && img){ // condicional usada para alterar da imagem para o espaçamento 
+				img = 0;
+			}else if( (indiceEsp != 0) && (indiceEsp % tamanhoEspacamento == 0) && !img){ // condicional usada para alterar do espaçamento para a imagem
+				img = 1;
+			}
 		}
 
-		if((iImg != 0) && (iImg % tamanhoTiras == 0)  && img){ // condicional usada para alterar da imagem para o espaçamento 
-			img = 0;
-		}else if( (indiceEsp != 0) && (indiceEsp % tamanhoEspacamento == 0) && !img){ // condicional usada para alterar do espaçamento para a imagem
-			img = 1;
-		}
+		return destino;
+
 	}
 
-	return destino;
 }
