@@ -81,46 +81,52 @@ void adicionarWidgetsMeuFiltro(GtkWidget *container) {
 }
 
 Imagem meuFiltro(Imagem origem) {
-	int i, j, x;
-	int cont = 0, toggle = 1;
-	int ch1 = 0, ch2 = 1, ch3 = 2;
+	int i, j; 
+	int iImg = 0, jImg = 0;
+	int indiceEsp = 0;
+	int img = 1;
 	
 	// Recebe os valores da barras de rolagem
-	int nivelTiras = (int) gtk_range_get_value(GTK_RANGE(widgetControleTamanho));
-	nivelTiras = origem.h / nivelTiras;
-	int nivelEspacamento = (int) gtk_range_get_value(GTK_RANGE(widgetControleEspacamento));
-	nivelEspacamento= origem.h / nivelEspacamento;
+	int tamanhoTiras = (int) gtk_range_get_value(GTK_RANGE(widgetControleTamanho));
+	int tamanhoEspacamento = (int) gtk_range_get_value(GTK_RANGE(widgetControleEspacamento));
 
 	// Calcula a qtd de tiras e espaçamentos
-	int qtdTiras = origem.h / nivelTiras;
+	int qtdTiras = origem.h / tamanhoTiras;
 	int qtdEspacamentos = qtdTiras - 1;
 
-	Imagem destino = alocarImagemDimensao(origem.w, (origem.h + (nivelEspacamento * qtdEspacamentos)), origem.numCanais);	
+	printf("%d %d  %d %d  %d \n", tamanhoTiras, tamanhoEspacamento, qtdTiras, qtdEspacamentos, ((origem.h) + (tamanhoEspacamento * qtdEspacamentos))); // usado apenas para a verificação dos valores
 
-	for(i = 0, x = 0; i < destino.h; i++) {
-		for(j = 0; j < destino.w; j++) {
-			if (toggle % 2) {
-				destino.m[i][j][ch1] = origem.m[x][j][ch1];
-				destino.m[i][j][ch2] = origem.m[x][j][ch2];
-				destino.m[i][j][ch3] = origem.m[x][j][ch3];
-			} else {
+
+	//alocando uma nova imagem já com a altura modificada
+	Imagem destino = alocarImagemDimensao(origem.w, ((origem.h) + (tamanhoEspacamento * qtdEspacamentos)), origem.numCanais);	 // altura = alturaOrigem + (tamanhoTiras * qntTiras)
+
+	//percorrendo a imagem destino
+	for(i = 0; i < destino.h; i++) {
+		for(j = 0, jImg = 0; j < destino.w; j++) {
+
+			if (img){ //copia o valor da imagem
+				destino.m[i][j][0] = origem.m[iImg][jImg][0];
+				destino.m[i][j][1] = origem.m[iImg][jImg][1];
+				destino.m[i][j][2] = origem.m[iImg][jImg][2];
+				jImg++; //incremento do indice j da imagem -> não é necessário usar aqui, mas vai facilitar na construção das tiras verticais
+
+			}else{ //deixando a tira preta
 				destino.m[i][j][0] = 0;
 				destino.m[i][j][1] = 0;
 				destino.m[i][j][2] = 0;
-			}		
+			}
 		}
-		cont ++;
 
-		if (toggle % 2) {
-			x++;
+		if(img){ //incremento do indice i da imagem
+			iImg++;
+		} else { // incrmento do indice i do espaçamento
+			indiceEsp++;
 		}
-		
-		if (cont == nivelTiras && toggle % 2) {
-			toggle = 2;
-			cont = 0;
-		} else if (cont == nivelEspacamento && (!(toggle % 2))) {
-			toggle = 1;
-			cont = 0;
+
+		if((iImg != 0) && (iImg % tamanhoTiras == 0)  && img){ // condicional usada para alterar da imagem para o espaçamento 
+			img = 0;
+		}else if( (indiceEsp != 0) && (indiceEsp % tamanhoEspacamento == 0) && !img){ // condicional usada para alterar do espaçamento para a imagem
+			img = 1;
 		}
 	}
 
