@@ -6,10 +6,10 @@ void inicializarWidgetsMeuFiltro() {
 	
 	// Controle de tamanho e espaçamento das tiras
 	labelTamanho = gtk_label_new("Tamanho das tiras");
-	widgetControleTamanho = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1, 10, 1);
+	widgetControleTamanho = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1, 100, 1);
 	g_signal_connect(G_OBJECT(widgetControleTamanho), "value-changed", G_CALLBACK(funcaoAplicar), NULL);
 	labelEspacamento = gtk_label_new("Espaçamento entre as tiras");
-	widgetControleEspacamento = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1, 10, 1);
+	widgetControleEspacamento = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1, 100, 1);
 	g_signal_connect(G_OBJECT(widgetControleEspacamento), "value-changed", G_CALLBACK(funcaoAplicar), NULL);
 
 	// Orientação das Tiras (Horizontal ou Vertical)
@@ -103,7 +103,6 @@ Imagem meuFiltro(Imagem origem) {
 	//percorrendo a imagem destino
 	for(i = 0; i < destino.h; i++) {
 		for(j = 0, jImg = 0; j < destino.w; j++) {
-
 			if (img){ //copia o valor da imagem
 				destino.m[i][j][0] = origem.m[iImg][jImg][0];
 				destino.m[i][j][1] = origem.m[iImg][jImg][1];
@@ -131,4 +130,5 @@ Imagem meuFiltro(Imagem origem) {
 	}
 
 	return destino;
+	
 }
